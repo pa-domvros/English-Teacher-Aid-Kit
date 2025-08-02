@@ -1,156 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The English Teacher Aid Kit</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComicReady - Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Comic Neue', cursive;
+        }
+        .script-slot {
+            background-color: #e5e7eb; /* gray-200 */
+            border: 2px dashed #9ca3af; /* gray-400 */
+            color: #9ca3af;
+            transition: all 0.3s ease;
+            min-height: 50px; /* Ensure slot has height */
+        }
+        .script-slot.filled {
+            background-color: #d1fae5; /* green-100 */
+            border: 2px solid #10b981; /* green-500 */
+            color: #064e3b; /* green-900 */
+            font-weight: bold;
+        }
+        .script-slot.drag-over {
+            transform: scale(1.02);
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        .sentence-option {
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+        .sentence-option.dragging {
+            opacity: 0.5;
+        }
+        .incorrect-drop {
+            animation: shake 0.5s;
+            background-color: #fee2e2; /* red-100 */
+            border-color: #ef4444; /* red-500 */
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .relative {
+            position: relative;
+        }
+    </style>
 </head>
-<body>
-  <header>
-    <h1>🍎 The English Teacher Aid Kit</h1>
-    <p><em>Created by Panagiotis Domvros, English and Drama Teacher</em></p>
-    <p class="update-notice">Material is constantly updated</p>
-    
-    <div class="social-media">
-      <a href="https://www.facebook.com/panayotis.domvros/" target="_blank" title="Facebook">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.04c-5.5 0-10 4.49-10 10s4.5 10 10 10 10-4.49 10-10-4.5-10-10-10zm3.5 10.5h-2.5v7h-3v-7h-2v-3h2v-2c0-1.6.9-2.5 2.5-2.5h2.5v3h-1.5c-.5 0-.5.2-.5.5v1.5h2.5l-.5 3z"/></svg>
-      </a>
-      <a href="https://www.instagram.com/p_domvros/" target="_blank" title="Instagram">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c-2.72 0-3.05.01-4.12.06-1.06.05-1.79.22-2.42.46-.65.25-1.23.59-1.77 1.15-.54.56-.89 1.13-1.14 1.78-.24.63-.41 1.36-.46 2.42-.05 1.07-.06 1.4-.06 4.12s.01 3.05.06 4.12c.05 1.06.22 1.79.46 2.42.25.65.59 1.23 1.14 1.78.54.56 1.12.91 1.77 1.15.63.24 1.36.41 2.42.46 1.07.05 1.4.06 4.12.06s3.05-.01 4.12-.06c1.06-.05 1.79-.22 2.42-.46.65-.25 1.23-.59 1.77-1.15.54-.56.89-1.13 1.14-1.78.24-.63.41-1.36.46-2.42.05-1.07.06-1.4.06-4.12s-.01-3.05-.06-4.12c-.05-1.06-.22-1.79-.46-2.42-.25-.65-.59-1.23-1.14-1.78-.54-.56-1.12-.9-1.77-1.14-.63-.24-1.36-.41-2.42-.46C15.05 2.01 14.72 2 12 2zm0 1.8c2.67 0 2.98.01 4.04.06 1.03.05 1.5.2 1.8.34.42.17.69.38.96.65.27.27.48.54.65.96.14.3.29.77.34 1.8.05 1.06.06 1.37.06 4.04s-.01 2.98-.06 4.04c-.05 1.03-.2 1.5-.34 1.8-.17.42-.38.69-.65.96-.27.27-.54.48-.96.65-.3.14-.77.29-1.8.34-1.06.05-1.37.06-4.04.06s-2.98-.01-4.04-.06c-1.03-.05-1.5-.2-1.8-.34-.42-.17-.69-.38-.96-.65-.27-.27-.48-.54-.65-.96-.14-.3-.29-.77-.34-1.8-.05-1.06-.06-1.37-.06-4.04s.01-2.98.06-4.04c.05-1.03.2-1.5.34-1.8.17-.42.38-.69.65-.96.27-.27.54-.48.96-.65.3-.14.77-.29 1.8-.34C9.02 3.81 9.33 3.8 12 3.8zm0 3.35c-2.4 0-4.35 1.95-4.35 4.35s1.95 4.35 4.35 4.35 4.35-1.95 4.35-4.35-1.95-4.35-4.35-4.35zm0 7c-1.47 0-2.65-1.18-2.65-2.65S10.53 9.5 12 9.5s2.65 1.18 2.65 2.65-1.18 2.65-2.65 2.65zm4.95-6.9c-.61 0-1.1.49-1.1 1.1s.49 1.1 1.1 1.1 1.1-.49 1.1-1.1-.49-1.1-1.1-1.1z"/></svg>
-      </a>
-      <a href="https://www.youtube.com/channel/UCn0jq-LEikDRVDQHQi47eYw" target="_blank" title="YouTube">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.36 14.12V7.88c0-.61.66-1.01 1.2-.69l5.06 3.12c.54.33.54.85 0 1.18l-5.06 3.12c-.54.33-1.2-.08-1.2-.69z"/></svg>
-      </a>
-      <a href="mailto:pa.domvros@gmail.com" title="Email">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg>
-      </a>
+<body class="bg-blue-100 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <!-- Introduction Page -->
+    <div id="intro-page" class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg text-center">
+        <h1 class="text-5xl font-bold text-blue-600 mb-4">ComicReady</h1>
+        <h2 class="text-2xl font-bold text-gray-700 mb-4">Οδηγίες</h2>
+        <p class="text-lg text-gray-600 mb-6">
+            Σύρε τις προτάσεις από την τράπεζα προτάσεων στη σωστή σειρά του διαλόγου!
+        </p>
+        <p class="text-md italic text-gray-500 mb-8">
+           <strong> Created by Panagiotis Domvros on an idea by Nina Arconti</strong>
+        </p>
+        <button id="start-btn" class="w-full px-8 py-4 bg-green-500 text-white font-bold text-xl rounded-full hover:bg-green-600 transition-transform transform hover:scale-105 shadow-lg">
+            Έναρξη Παιχνιδιού
+        </button>
     </div>
-  </header>
 
-  <main>
+    <!-- Game Page (Initially Hidden) -->
+    <div id="game-page" class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-lg" style="display: none;">
+        <h1 class="text-4xl font-bold text-center text-blue-600 mb-2">ComicReady</h1>
+        <p class="text-center text-gray-500 mb-6">Drag the sentences from the bank to the correct script slot!</p>
 
-    <details>
-      <summary>🇬🇧 Grammar</summary>
-      <ul>
-        <li><a href="#">GrammarLab Hub – restricted access</a></li>
-        <li><a href="https://pa-domvros.github.io/GrammarQuest/" target="_blank">GrammarQuest (Present Simple & Continuous)</a></li>
-        <li><a href="https://pa-domvros.github.io/spin-present-sc/" target="_blank">Spin the Wheel (Present: Simple or Continuous? All levels)</a></li>
-        <li><a href="https://pa-domvros.github.io/past.s-past.c/" target="_blank">Simple Past and Past Progressive (A2-B1)</a></li>
-        <li><a href="https://pa-domvros.github.io/presentperfect-past1/" target="_blank">Simple Past or Simple Present Perfect (A2-B1)</a></li>
-        <li><a href="https://pa-domvros.github.io/worksheet-comparisons1/" target="_blank">Comparisons (A1)</a></li>
-        <li><a href="https://pa-domvros.github.io/place-prep1/" target="_blank">Prepositions of Place (A1)</a></li>
-        <li><a href="https://pa-domvros.github.io/reality-check/" target="_blank">Reality Check (Unreal Tenses – B2/C2)</a></li>
-        <li><a href="https://pa-domvros.github.io/editor-passive/" target="_blank">Editor’s Choice (Passive Voice B2-C2)</a></li>
-        <li><a href="https://pa-domvros.github.io/VoiceLab/#scenario-explorer" target="_blank">VoiceLab (Passive Voice B2-C2)</a></li>
-        <li><a href="https://pa-domvros.github.io/instruction-follower/" target="_blank">Instruction Follower (Imperative – A1/A2)</a></li>
-        <li><a href="https://pdomvros-productions.github.io/EmphasisLab/" target="_blank">EmphasisLab (Advanced)</a></li>
-      </ul>
-    </details>
+        <!-- Comic image for visual context only -->
+        <div id="comic-container" class="relative mb-6 w-full mx-auto">
+            <img id="comic-image" src="" alt="Comic Strip" class="w-full rounded-lg shadow-md">
+        </div>
 
-    <details>
-      <summary>✍️ Writing</summary>
-      <ul>
-        <li><a href="https://pa-domvros.github.io/SituationWhisperer/" target="_blank">Situation Whisperer (Agreeing and Disagreeing)</a></li>
-        <li><a href="https://pa-domvros.github.io/argument-builder/" target="_blank">The Argument Builder (B2-C2)</a></li>
-        <li><a href="https://pa-domvros.github.io/breaking-story/" target="_blank">The Daily Chronicle (Writing an Article A2-C2)</a></li>
-        <li><a href="https://pa-domvros.github.io/HookLab/" target="_blank">HookLab (Attention Grabbers – Advanced)</a></li>
-        <li><a href="https://pa-domvros.github.io/story-character-creator/" target="_blank">Story Character Creator (B2-C2)</a></li>
-        <li><a href="https://pa-domvros.github.io/character-description-bulder/" target="_blank">Character Builder & Essay Writer (Describing a Person B2-C2)</a></li>
-        <li><a href="https://pa-domvros.github.io/email-builder/" target="_blank">Email Builder for EFL Students (B2-C2)</a></li>
-        <li><a href="https://pdomvros.github.io/argumentative-B2/" target="_blank">Argumentative Essay B2</a></li>
-        <li><a href="https://pa-domvros.github.io/PunctuationLab/" target="_blank">PunctuationLab</a></li>
-      </ul>
-    </details>
+        <!-- The storyboard/script area -->
+        <div id="script-container" class="space-y-3 mb-6"></div>
 
-    <details>
-      <summary>🗣️ Speaking</summary>
-      <ul>
-        <li><a href="https://pa-domvros.github.io/FluentFlow/" target="_blank">FluentFlow (All Levels)</a></li>
-        <li><a href="https://pa-domvros.github.io/ClearSpeak/" target="_blank">ClearSpeak – (Asking for Clarifications B2-C2)</a></li>
-      </ul>
-    </details>
+        <!-- The bank of sentence options -->
+        <div id="sentence-bank" class="flex flex-wrap justify-center gap-3 p-4 bg-blue-50 rounded-lg min-h-[80px]"></div>
 
-    <details>
-      <summary>🎧 Listening</summary>
-      <ul>
-        <li>Content coming soon!</li>
-      </ul>
-    </details>
+        <div class="flex justify-center gap-4 mt-6">
+            <button id="reset-btn" class="px-8 py-3 bg-yellow-400 text-white font-bold rounded-full hover:bg-yellow-500 transition-transform transform hover:scale-105 shadow-lg">Reset</button>
+            <button id="next-btn" class="px-8 py-3 bg-green-500 text-white font-bold rounded-full hover:bg-green-600 transition-transform transform hover:scale-105 shadow-lg">Next</button>
+        </div>
+    </div>
 
-    <details>
-      <summary>📚 Vocabulary Practice</summary>
-      <ul>
-        <li><a href="https://pa-domvros.github.io/LexiQuest/" target="_blank">LexiQuest – The Hellenic Journey (Idioms B2-C2)</a></li>
-        <li><a href="https://pa-domvros.github.io/vocab-fire-challenge/" target="_blank">Vocabulary Fire Challenge (Core Vocabulary, All Levels)</a></li>
-        <li><a href="https://pa-domvros.github.io/Collocation-Dictionary-App/" target="_blank">Collocation Dictionary (Advanced)</a></li>
-        <li><a href="https://pdomvros-productions.github.io/life-after-C2/" target="_blank">Life after C2 (Very Advanced)</a></li>
-        <li><a href="https://pdomvros-edu.github.io/word-weaver/" target="_blank">The Word Weaver (B2)</a></li>
-        <li><a href="https://pdomvros-edu.github.io/word-weaver2/" target="_blank">The Word Weaver 2</a></li>
-        <li><a href="https://pdomvros-productions.github.io/ShakeSpeak/" target="_blank">ShakeSpeak: Phrases from Shakespeare</a></li>
-        <li><a href="https://pa-domvros.github.io/WordSpin//" target="_blank">WordSpin: Euphemisms-Dysphemisms</a></li>
-        <li><a href="https://pa-domvros.github.io/FunnyWords/" target="_blank">FunnyWords</a></li>
-      </ul>
-    </details>
+    <!-- Completion Page (Initially Hidden) -->
+    <div id="completion-page" class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg text-center" style="display: none;">
+        <h1 class="text-4xl font-bold text-green-600 mb-4">Congratulations!</h1>
+        <p class="text-lg text-gray-600 mb-8">You have completed all the comics!</p>
+        <button id="play-again-btn" class="w-full px-8 py-4 bg-blue-500 text-white font-bold text-xl rounded-full hover:bg-blue-600 transition-transform transform hover:scale-105 shadow-lg">
+            Παίξε ξανά
+        </button>
+    </div>
 
-    <details>
-      <summary>🧑‍🏫 Classroom Management</summary>
-      <ul>
-        <li><a href="https://pa-domvros.github.io/ClassroomChampions/" target="_blank">Classroom Champions (Beginners)</a></li>
-        <li><a href="https://pa-domvros.github.io/TeacherSpeak/" target="_blank">TeacherSpeak: Effective Teacher-Student Communication</a></li>
-      </ul>
-    </details>
+    <footer class="text-center text-gray-600 py-4 mt-4">
+        ✨✍️ Devised by Panagiotis Domvros, English and Drama Teacher © 2025✍️✨
+    </footer>
 
-    <details>
-      <summary>⏳ Time Fillers</summary>
-      <ul>
-        <li><a href="https://pa-domvros.github.io/LondonGo/" target="_blank">London Go!</a></li>
-        <li><a href="https://panagiotis-domvros.github.io/back-to-the-future-2/" target="_blank">Back-to-the-Future</a></li>
-        <li><a href="https://panagiotis-domvros.github.io/soulmate-partner/" target="_blank">Future Soulmate (Valentine’s Special)</a></li>
-        <li><a href="https://pdomvros.github.io/letter-from-the-past/" target="_blank">Letters from the Past</a></li>
-        <li><a href="https://pa-domvros.github.io/malapropism//" target="_blank">Malapropisms</a></li>
-        <li><a href="https://pdomvros-productions.github.io/StageReady///" target="_blank">StageReady (for Advanced Theatre Lovers)</a></li>
-      </ul>
-    </details>
+    <script>
+        // --- Page Navigation ---
+        const introPage = document.getElementById('intro-page');
+        const gamePage = document.getElementById('game-page');
+        const completionPage = document.getElementById('completion-page');
+        const startBtn = document.getElementById('start-btn');
+        const playAgainBtn = document.getElementById('play-again-btn');
 
-    <details>
-      <summary>🎲 Fun and Games (use with caution!)</summary>
-      <ul>
-        <li><a href="https://pdomvros.github.io/love-hangman-en/" target="_blank">Hangman of Love</a></li>
-        <li><a href="https://panagiotis-domvros.github.io/AuraVoice/" target="_blank">AuraVoice</a></li>
-        <li><a href="https://pdomvros-productions.github.io/LegacyPrint/" target="_blank">LegacyPrint</a></li>
-        <li><a href="https://pdomvros-productions.github.io/SoulSearch/" target="_blank">SoulSearch</a></li>
-        <li><a href="https://pdomvros-productions.github.io/AncestryTrace/" target="_blank">AncestryTrace</a></li>
-        <li><a href="https://pdomvros-productions.github.io/type-of-smart/" target="_blank">What is you smart?</a></li>
-      </ul>
-    </details>
+        startBtn.addEventListener('click', () => {
+            introPage.style.display = 'none';
+            gamePage.style.display = 'block';
+            document.querySelector('footer').style.display = 'none'; 
+        });
 
-    <details>
-      <summary>🚪 Escape Rooms</summary>
-      <ul>
-        <li><a href="https://docs.google.com/presentation/d/12gr7cc7GFafp02bikCDuKTMUPkJERD3tulBFordixv8/present?slide=id.p" target="_blank">First Aid (ΕΠΑΛ)</a></li>
-      </ul>
-    </details>
+        playAgainBtn.addEventListener('click', () => {
+            completionPage.style.display = 'none';
+            introPage.style.display = 'block';
+            document.querySelector('footer').style.display = 'block';
+            currentComicIndex = 0;
+            loadComic(currentComicIndex);
+        });
 
-    <details>
-      <summary>🎯 Special Focus</summary>
-      <ul>
-        <li><a href="https://pdomvros.github.io/bullying-eng/" target="_blank">Bullying</a></li>
-      </ul>
-    </details>
+        // --- Game Logic ---
+        const comicData = [
+            { image: 'images/1.jpg', script: [ { character: 'Leo', text: "Hi, Mia!" }, { character: 'Mia', text: "Hello, Leo!" }, { character: 'Leo', text: "How are you?" }, { character: 'Mia', text: "I'm fine, thanks!" } ] },
+            { image: 'images/2.jpg', script: [ { character: 'Ben', text: "What is this?" }, { character: 'Anna', text: "It's a car." }, { character: 'Ben', text: "Is it fast?" }, { character: 'Anna', text: "Yes, it is!" } ] },
+            { image: 'images/3.jpg', script: [ { character: 'Alex', text: "I'm hungry." }, { character: 'Chloe', text: "Me too." }, { character: 'Alex', text: "Do you want an apple?" }, { character: 'Chloe', text: "Yes, please." } ] },
+            { image: 'images/4.jpg', script: [ { character: 'Tom', text: "Where is my bag?" }, { character: 'Lily', text: "It's on the chair." }, { character: 'Tom', text: "And my book?" }, { character: 'Lily', text: "It's in your bag." } ] },
+            { image: 'images/5.jpg', script: [ { character: 'Jake', text: "Let's play!" }, { character: 'Sophie', text: "Okay." }, { character: 'Jake', text: "Can you catch me?" }, { character: 'Sophie', text: "I will try!" } ] },
+            { image: 'images/6.jpg', script: [ { character: 'Noah', text: "What are you drawing?" }, { character: 'Emma', text: "A big sun." }, { character: 'Noah', text: "I like it!" }, { character: 'Emma', text: "Thank you." } ] },
+            { image: 'images/7.jpg', script: [ { character: 'Sam', text: "Can you help me?" }, { character: 'Dad', text: "Sure." }, { character: 'Sam', text: "I can't reach it." }, { character: 'Dad', text: "Here you go." } ] },
+            { image: 'images/8.jpg', script: [ { character: 'Chris', text: "Look! A cat." }, { character: 'Olivia', text: "It's so cute." }, { character: 'Chris', text: "What is its name?" }, { character: 'Olivia', text: "I don't know." } ] },
+            { image: 'images/9.jpg', script: [ { character: 'Max', text: "It's time to go." }, { character: 'Zoe', text: "Okay. Bye!" }, { character: 'Max', text: "See you tomorrow." }, { character: 'Zoe', text: "Bye-bye!" } ] },
+            { image: 'images/10.jpg', script: [ { character: 'Daniel', text: "Is it hot today?" }, { character: 'Isabella', text: "Yes, it is." }, { character: 'Daniel', text: "Let's go outside." }, { character: 'Isabella', text: "That's a good idea!" } ] }
+        ];
 
-    <details>
-      <summary>✒️Lesson Plans and Educational Scenarios</summary>
-      <ul>
-        <li><a href="#">Lesson Plan Builder– restricted access</a></li>
-        <li><a href="https://https://pa-domvros.github.io/assessment-types//" target="_blank">Formative vs. Summative Assessmet</a></li>
-        <li><a href="https://pa-domvros.github.io/ed-scenario-builder//" target="_blank">Educational Scenario Builder</a></li>
-      </ul>
-    </details>
-  </main>
+        let currentComicIndex = 0;
 
-  <footer>
-    <p>✨ Panagiotis Domvros (pa.domvros@gmail.com), English and Drama Teacher, All Rights Reserved ✨</p>
-  </footer>
+        const comicImage = document.getElementById('comic-image');
+        const scriptContainer = document.getElementById('script-container');
+        const sentenceBank = document.getElementById('sentence-bank');
+        const nextBtn = document.getElementById('next-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        
+        function loadComic(index) {
+            if (index >= comicData.length) {
+                gamePage.style.display = 'none';
+                completionPage.style.display = 'block';
+                document.querySelector('footer').style.display = 'block';
+                return;
+            }
+            const comic = comicData[index];
+            comicImage.src = comic.image;
+            comicImage.onerror = () => {
+                comicImage.src = `https://placehold.co/800x400/e2e8f0/cbd5e1?text=Image+not+found`;
+            };
+
+            // Create script slots
+            scriptContainer.innerHTML = '';
+            comic.script.forEach((line, i) => {
+                const slot = document.createElement('div');
+                slot.className = 'script-slot p-3 rounded-lg text-lg flex items-center justify-center';
+                slot.dataset.index = i;
+                slot.dataset.correctText = line.text;
+                
+                // Add "Αρχίζει ο [Character]" for the first line of each comic
+                if (i === 0) {
+                    slot.innerHTML = `
+                        <div class="text-sm text-gray-500 absolute -top-5 left-0">Αρχίζει ο ${line.character}</div>
+                        <span class="font-bold">${line.character}:</span> <span class="ml-2">...</span>
+                    `;
+                    slot.classList.add('relative'); // Add relative positioning for the absolute positioned indicator
+                } else {
+                    slot.innerHTML = `<span class="font-bold">${line.character}:</span> <span class="ml-2">...</span>`;
+                }
+                scriptContainer.appendChild(slot);
+            });
+
+            // Create sentence bank
+            sentenceBank.innerHTML = '';
+            const shuffledSentences = [...comic.script].sort(() => Math.random() - 0.5);
+            shuffledSentences.forEach(line => {
+                const option = document.createElement('div');
+                option.className = 'sentence-option bg-white p-2 rounded-md shadow border-2 border-gray-300';
+                option.textContent = line.text;
+                option.draggable = true;
+                sentenceBank.appendChild(option);
+            });
+            
+            addDragAndDropListeners();
+        }
+
+        function addDragAndDropListeners() {
+            const sentences = document.querySelectorAll('.sentence-option');
+            const slots = document.querySelectorAll('.script-slot');
+
+            sentences.forEach(sentence => {
+                sentence.addEventListener('dragstart', (e) => {
+                    e.target.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', e.target.textContent);
+                });
+
+                sentence.addEventListener('dragend', (e) => {
+                    e.target.classList.remove('dragging');
+                });
+            });
+
+            slots.forEach(slot => {
+                slot.addEventListener('dragover', (e) => {
+                    if (!slot.classList.contains('filled')) {
+                        e.preventDefault();
+                        slot.classList.add('drag-over');
+                    }
+                });
+
+                slot.addEventListener('dragleave', () => {
+                    slot.classList.remove('drag-over');
+                });
+
+                slot.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    slot.classList.remove('drag-over');
+                    if (slot.classList.contains('filled')) return;
+
+                    const droppedText = e.dataTransfer.getData('text/plain');
+                    const correctText = slot.dataset.correctText;
+
+                    if (droppedText === correctText) {
+                        const comic = comicData[currentComicIndex];
+                        const character = comic.script[slot.dataset.index].character;
+                        
+                        // Keep the "Αρχίζει ο [Character]" indicator if it's the first line
+                        if (slot.dataset.index === '0') {
+                            slot.innerHTML = `
+                                <div class="text-sm text-gray-500 absolute -top-5 left-0">Αρχίζει ο ${character}</div>
+                                <span class="font-bold">${character}:</span><span class="ml-2">${correctText}</span>
+                            `;
+                        } else {
+                            slot.innerHTML = `<span class="font-bold">${character}:</span><span class="ml-2">${correctText}</span>`;
+                        }
+                        
+                        slot.classList.add('filled');
+                        
+                        document.querySelectorAll('.sentence-option').forEach(opt => {
+                            if (opt.textContent === droppedText) {
+                                opt.style.display = 'none';
+                            }
+                        });
+                    } else {
+                        slot.classList.add('incorrect-drop');
+                        setTimeout(() => {
+                            slot.classList.remove('incorrect-drop');
+                        }, 500);
+                    }
+                });
+            });
+        }
+        
+        nextBtn.addEventListener('click', () => {
+            currentComicIndex++;
+            loadComic(currentComicIndex);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            loadComic(currentComicIndex);
+        });
+
+        // Initial load of the game logic (but the game page is hidden)
+        loadComic(currentComicIndex);
+    </script>
 </body>
 </html>
