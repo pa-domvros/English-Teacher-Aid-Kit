@@ -1,497 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fun with Phrases</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap');
-
-        body {
-            font-family: 'Merriweather', serif;
-            background-color: #f0f4f8;
-            color: #333;
-            line-height: 1.5;
-            padding: 15px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 15px 30px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .intro {
-            text-align: center;
-            padding: 5px 0 20px;
-        }
-        
-        .intro h1 {
-            color: #d9534f;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        .intro p {
-            font-size: 0.95em;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .credit-line {
-            font-style: italic;
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 15px;
-        }
-
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 20px;
-        }
-
-        .tab-button {
-            padding: 8px 16px;
-            cursor: pointer;
-            border: none;
-            background-color: transparent;
-            font-size: 1em;
-            font-family: 'Merriweather', serif;
-            position: relative;
-            color: #555;
-            transition: color 0.3s ease;
-        }
-
-        .tab-button.active {
-            color: #d9534f;
-            font-weight: bold;
-        }
-        
-        .tab-button.active::after {
-            content: '';
-            display: block;
-            width: 100%;
-            height: 3px;
-            background: #d9534f;
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-        }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        h2 {
-            color: #d9534f;
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 2em;
-        }
-
-        ol {
-            list-style: none;
-            padding-left: 0;
-            display: grid;
-            gap: 15px 30px;
-        }
-
-        #international-list, #greek-list { grid-template-columns: 1fr 1fr; }
-        
-        li {
-            background-color: #fafafa;
-            padding: 12px;
-            border-radius: 4px;
-            border-left: 4px solid #d9534f;
-            margin-bottom: 0;
-        }
-        
-        .phrase-text, .greek-phrase {
-            font-weight: bold;
-            font-size: 1.05em;
-            color: #2c3e50;
-        }
-        
-        .greek-phrase {
-             font-family: 'Noto Serif JP', serif;
-             font-size: 1.2em;
-        }
-        
-        .origin { font-style: italic; color: #555; }
-        .label { font-weight: bold; color: #34495e; }
-        li p { margin: 3px 0; font-size: 0.9em; }
-
-        .toggle-greek-btn {
-            background-color: #e0e0e0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 0.8em;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: background-color 0.2s;
-        }
-        .toggle-greek-btn:hover { background-color: #d1d1d1; }
-
-        .greek-equivalent {
-            margin-top: 10px;
-            padding: 8px;
-            background-color: #e3f2fd;
-            border-left: 3px solid #90caf9;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-        .greek-equivalent strong { font-family: 'Noto Serif JP', serif; }
-        
-        /* Activity Styles */
-        .activity-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            align-items: start;
-        }
-        
-        .column {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        
-        .column h3 {
-            text-align: center;
-            color: #34495e;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        
-        .dropzone {
-            background-color: #fff;
-            border: 2px dashed #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
-            transition: background-color 0.3s, border-color 0.3s;
-            min-height: 40px;
-        }
-        .dropzone .greek-phrase { font-size: 1.1em; margin: 0; }
-        
-        .dropzone.drag-over { background-color: #e8f5e9; border-color: #66bb6a; }
-        
-        .dropzone.correct {
-            background-color: #c8e6c9;
-            border: 2px solid #4caf50;
-        }
-        .dropzone.correct .draggable {
-            border-color: #4caf50;
-            background-color: #fff;
-        }
-
-        .draggable {
-            background-color: #e3f2fd;
-            border: 1px solid #90caf9;
-            padding: 8px;
-            margin: 0;
-            border-radius: 5px;
-            cursor: grab;
-            user-select: none;
-            font-size: 0.9em;
-        }
-        
-        .draggable:active { cursor: grabbing; }
-        .draggable.dragging { opacity: 0.5; }
-
-        /* Responsive layout */
-        @media (max-width: 900px) {
-            #international-list, #greek-list, .activity-container {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 15px;
-            font-size: 0.9em;
-            color: #555;
-        }
-
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The English Teacher Aid Kit</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-    <div class="container">
-        <div class="intro">
-            <h1>Fun with Phrases</h1>
-            <p>Explore peculiar and witty phrases from around the world. Discover their literal translations and true meanings, and test your knowledge by matching Greek phrases to their English equivalents!</p>
-            <p class="credit-line">Compiled by Panagiotis Domvros, English and Drama Teacher</p>
-        </div>
-
-        <div class="tabs">
-            <button class="tab-button active" onclick="openTab(event, 'international')">International</button>
-            <button class="tab-button" onclick="openTab(event, 'greek')">Greek</button>
-            <button class="tab-button" onclick="openTab(event, 'activity1')">Activity 1</button>
-            <button class="tab-button" onclick="openTab(event, 'activity2')">Activity 2</button>
-            <button class="tab-button" onclick="openTab(event, 'activity3')">Activity 3</button>
-        </div>
-
-        <div id="international" class="tab-content active">
-            <h2>Peculiar Phrases from Around the World</h2>
-            <ol id="international-list">
-                <li><p class="phrase-text">"Not my circus, not my monkeys." <span class="origin">(Polish)</span></p><p><span class="label">Literal:</span> It's not my circus, it's not my monkeys.</p><p><span class="label">Meaning:</span> That's not my problem.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Δεν με αφορά.»</strong></p></li>
-                <li><p class="phrase-text">"To have a monkey on one's back." <span class="origin">(English)</span></p><p><span class="label">Literal:</span> A monkey clinging to you.</p><p><span class="label">Meaning:</span> A bad habit or addiction you can't shake off.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Έχει ένα κόλλημα.»</strong></p></li>
-                <li><p class="phrase-text">"Swallowing camels while straining at gnats." <span class="origin">(Swedish)</span></p><p><span class="label">Literal:</span> Worrying about tiny things but ignoring big ones.</p><p><span class="label">Meaning:</span> Missing the forest for the trees.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Χάνει το δάσος για το δέντρο.»</strong></p></li>
-                <li><p class="phrase-text">"To have tomatoes on your eyes." <span class="origin">(German)</span></p><p><span class="label">Literal:</span> Seeing the world through tomatoes.</p><p><span class="label">Meaning:</span> Being oblivious to what's right in front of you.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Έχει/Φοράει παρωπίδες.»</strong></p></li>
-                <li><p class="phrase-text">"To slide in on a shrimp sandwich." <span class="origin">(Swedish)</span></p><p><span class="label">Literal:</span> Someone who just floats in on shrimp.</p><p><span class="label">Meaning:</span> A spoiled person who has it too easy.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Τα βρίσκει όλα έτοιμα.»</strong></p></li>
-                <li><p class="phrase-text">"There is no cow on the ice." <span class="origin">(Swedish)</span></p><p><span class="label">Literal:</span> Relax-no cow is stranded on the ice.</p><p><span class="label">Meaning:</span> Everything's fine, no need to worry.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Μην σκας.»</strong></p></li>
-                <li><p class="phrase-text">"Not the sharpest knife in the drawer." <span class="origin">(English)</span></p><p><span class="label">Literal:</span> A dull kitchen knife.</p><p><span class="label">Meaning:</span> Someone not very smart.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Δεν κόβει το μυαλό του.»</strong></p></li>
-                <li><p class="phrase-text">"To have long hands." <span class="origin">(Arabic)</span></p><p><span class="label">Literal:</span> Someone with very long hands.</p><p><span class="label">Meaning:</span> A thief, or someone who takes what isn't theirs.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Είναι μακρυχέρης.»</strong></p></li>
-                <li><p class="phrase-text">"To give someone pumpkins." <span class="origin">(Spanish)</span></p><p><span class="label">Literal:</span> Handing pumpkins to someone.</p><p><span class="label">Meaning:</span> To reject someone romantically.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Του/Της έριξε χυλόπιτα.»</strong></p></li>
-                <li><p class="phrase-text">"To jump from the rooster to the donkey." <span class="origin">(French)</span></p><p><span class="label">Literal:</span> Leaping from rooster to donkey.</p><p><span class="label">Meaning:</span> Changing subjects abruptly in conversation.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Πηδάει από το ένα θέμα στο άλλο.»</strong></p></li>
-                <li><p class="phrase-text">"To buy a cat in a sack." <span class="origin">(German)</span></p><p><span class="label">Literal:</span> Purchasing a hidden cat.</p><p><span class="label">Meaning:</span> Being tricked into buying something you can't see.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Αγόρασε γουρούνι στο σακί.»</strong></p></li>
-                <li><p class="phrase-text">"As clear as dumpling broth." <span class="origin">(Russian)</span></p><p><span class="label">Literal:</span> Totally unclear soup.</p><p><span class="label">Meaning:</span> When something is confusing or murky.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Είναι θολά τα νερά.»</strong></p></li>
-                <li><p class="phrase-text">"To have a face like a dropped pie." <span class="origin">(Australian English)</span></p><p><span class="label">Literal:</span> A pie fallen flat on the floor.</p><p><span class="label">Meaning:</span> Someone not conventionally attractive.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;">No direct idiomatic equivalent.</p></li>
-                <li><p class="phrase-text">"To have a frog in your throat." <span class="origin">(English, but shared worldwide)</span></p><p><span class="label">Literal:</span> A frog stuck in your throat.</p><p><span class="label">Meaning:</span> Being hoarse or unable to speak clearly.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Είναι βραχνιασμένος.»</strong></p></li>
-                <li><p class="phrase-text">"When the chickens have teeth." <span class="origin">(French)</span></p><p><span class="label">Literal:</span> Chickens growing teeth.</p><p><span class="label">Meaning:</span> Something impossible, like "when pigs fly."</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Του Αγίου Ποτέ.»</strong></p></li>
-                <li><p class="phrase-text">"To ride as if you stole it." <span class="origin">(Finnish)</span></p><p><span class="label">Literal:</span> Riding like a thief.</p><p><span class="label">Meaning:</span> Doing something recklessly fast.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Πάει σφαίρα.»</strong></p></li>
-                <li><p class="phrase-text">"To be as pleased as Punch." <span class="origin">(British English)</span></p><p><span class="label">Literal:</span> Referring to Punch (of Punch and Judy fame).</p><p><span class="label">Meaning:</span> Extremely happy with oneself, smugly so.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Πλέει σε πελάγη ευτυχίας.»</strong></p></li>
-                <li><p class="phrase-text">"The cat's jump." <span class="origin">(Japanese - 猫の跳躍)</span></p><p><span class="label">Literal:</span> The leap of a cat.</p><p><span class="label">Meaning:</span> A short distance, or a quick little detour.</p><button class="toggle-greek-btn">Greek Equivalent</button><p class="greek-equivalent" style="display:none;"><strong>«Είναι δύο βήματα από εδώ.»</strong></p></li>
-            </ol>
-        </div>
-
-        <div id="greek" class="tab-content">
-            <h2>30 Typical Greek Phrases</h2>
-            <ol id="greek-list">
-                <li><p class="greek-phrase">«Περί ορέξεως, κολοκυθόπιτα.»</p><p><span class="label">Literal Translation:</span> About appetite, pumpkin pie.</p></li>
-                <li><p class="greek-phrase">«Κάνει την πάπια.»</p><p><span class="label">Literal Translation:</span> He's doing the duck.</p></li>
-                <li><p class="greek-phrase">«Τα έκανε θάλασσα.»</p><p><span class="label">Literal Translation:</span> He made them a sea.</p></li>
-                <li><p class="greek-phrase">«Σιγά τον πολυέλαιο!»</p><p><span class="label">Literal Translation:</span> Slow down the chandelier!</p></li>
-                <li><p class="greek-phrase">«Κόλλησε σαν στρείδι.»</p><p><span class="label">Literal Translation:</span> He stuck like an oyster.</p></li>
-                <li><p class="greek-phrase">«Του ήρθε ο ουρανός σφοντύλι.»</p><p><span class="label">Literal Translation:</span> The sky came to him like a vertebra.</p></li>
-                <li><p class="greek-phrase">«Χρωστάει της Μιχαλούς.»</p><p><span class="label">Literal Translation:</span> He owes Michalis's wife.</p></li>
-                <li><p class="greek-phrase">«Πνίγεται σε μια κουταλιά νερό.»</p><p><span class="label">Literal Translation:</span> He's drowning in a spoonful of water.</p></li>
-                <li><p class="greek-phrase">«Ακόμα δεν τον είδαμε, Γιάννη τον βαφτίσαμε.»</p><p><span class="label">Literal Translation:</span> We haven't seen him yet, and we've already named him Yiannis.</p></li>
-                <li><p class="greek-phrase">«Έφαγε πόρτα.»</p><p><span class="label">Literal Translation:</span> He ate a door.</p></li>
-                <li><p class="greek-phrase">«Μου έκανε την καρδιά περιβόλι.»</p><p><span class="label">Literal Translation:</span> He made my heart a garden.</p></li>
-                <li><p class="greek-phrase">«Τον έπιασε στον ύπνο.»</p><p><span class="label">Literal Translation:</span> He caught him in his sleep.</p></li>
-                <li><p class="greek-phrase">«Μάτια που δεν βλέπονται, γρήγορα λησμονιούνται.»</p><p><span class="label">Literal Translation:</span> Eyes that don't see each other are quickly forgotten.</p></li>
-                <li><p class="greek-phrase">«Όπου ακούς πολλά κεράσια, κράτα μικρό καλάθι.»</p><p><span class="label">Literal Translation:</span> Where you hear of many cherries, hold a small basket.</p></li>
-                <li><p class="greek-phrase">«Θα φάμε κουφέτα.»</p><p><span class="label">Literal Translation:</span> We will eat sugared almonds.</p></li>
-                <li><p class="greek-phrase">«Είναι φυτό.»</p><p><span class="label">Literal Translation:</span> He is a plant.</p></li>
-                <li><p class="greek-phrase">«Έχει το ψώνιο.»</p><p><span class="label">Literal Translation:</span> He has "the shopping."</p></li>
-                <li><p class="greek-phrase">«Άλλαξε ο Μανωλιός κι έβαλε τα ρούχα του αλλιώς.»</p><p><span class="label">Literal Translation:</span> Manolios changed and wore his clothes differently.</p></li>
-                <li><p class="greek-phrase">«Αυγά σου καθαρίζουν;»</p><p><span class="label">Literal Translation:</span> Are they peeling eggs for you?</p></li>
-                <li><p class="greek-phrase">«Ψάχνει ψύλλους στ' άχυρα.»</p><p><span class="label">Literal Translation:</span> He's looking for fleas in the hay.</p></li>
-                <li><p class="greek-phrase">«Κάθε κατεργάρης στον πάγκο του.»</p><p><span class="label">Literal Translation:</span> Every scoundrel to his workbench.</p></li>
-                <li><p class="greek-phrase">«Του έψησε το ψάρι στα χείλη.»</p><p><span class="label">Literal Translation:</span> He grilled the fish on his lips.</p></li>
-                <li><p class="greek-phrase">«Είναι για τα πανηγύρια.»</p><p><span class="label">Literal Translation:</span> He/it is for the festivals.</p></li>
-                <li><p class="greek-phrase">«Τρώει από τα έτοιμα.»</p><p><span class="label">Literal Translation:</span> He eats from the ready-made.</p></li>
-                <li><p class="greek-phrase">«Κάνει τον Κινέζο.»</p><p><span class="label">Literal Translation:</span> He's playing the Chinese person.</p></li>
-                <li><p class="greek-phrase">«Τα μυαλά στα κάγκελα.»</p><p><span class="label">Literal Translation:</span> The brains on the railings.</p></li>
-                <li><p class="greek-phrase">«Άνθρακας ο θησαυρός.»</p><p><span class="label">Literal Translation:</span> The treasure is coal.</p></li>
-                <li><p class="greek-phrase">«Μπίλιες θα γίνουμε.»</p><p><span class="label">Literal Translation:</span> We will become marbles.</p></li>
-                <li><p class="greek-phrase">«Μας πουλάει αέρα κοπανιστό.»</p><p><span class="label">Literal Translation:</span> He sells us pounded air.</p></li>
-                <li><p class="greek-phrase">«Ίσα βάρκα, ίσα πανιά.»</p><p><span class="label">Literal Translation:</span> Equal boat, equal sails.</p></li>
-            </ol>
-        </div>
-
-        <div id="activity1" class="tab-content">
-            <h2>Activity 1: Match the Phrases!</h2>
-            <div class="activity-container">
-                <div class="column">
-                    <h3>Greek Phrases</h3>
-                    <div class="dropzone" data-id="1"><p class="greek-phrase">«Περί ορέξεως, κολοκυθόπιτα.»</p></div>
-                    <div class="dropzone" data-id="2"><p class="greek-phrase">«Κάνει την πάπια.»</p></div>
-                    <div class="dropzone" data-id="3"><p class="greek-phrase">«Τα έκανε θάλασσα.»</p></div>
-                    <div class="dropzone" data-id="4"><p class="greek-phrase">«Σιγά τον πολυέλαιο!»</p></div>
-                    <div class="dropzone" data-id="5"><p class="greek-phrase">«Κόλλησε σαν στρείδι.»</p></div>
-                    <div class="dropzone" data-id="6"><p class="greek-phrase">«Του ήρθε ο ουρανός σφοντύλι.»</p></div>
-                    <div class="dropzone" data-id="7"><p class="greek-phrase">«Χρωστάει της Μιχαλούς.»</p></div>
-                    <div class="dropzone" data-id="8"><p class="greek-phrase">«Πνίγεται σε μια κουταλιά νερό.»</p></div>
-                    <div class="dropzone" data-id="9"><p class="greek-phrase">«Ακόμα δεν τον είδαμε, Γιάννη τον βαφτίσαμε.»</p></div>
-                    <div class="dropzone" data-id="10"><p class="greek-phrase">«Έφαγε πόρτα.»</p></div>
-                </div>
-                <div class="column">
-                    <h3>English Equivalents</h3>
-                    <div class="draggable" draggable="true" data-id="7">He/she is crazy.</div>
-                    <div class="draggable" draggable="true" data-id="2">She/He's playing dumb.</div>
-                    <div class="draggable" draggable="true" data-id="9">Don't count your chickens before they hatch.</div>
-                    <div class="draggable" draggable="true" data-id="4">What's the big deal?</div>
-                    <div class="draggable" draggable="true" data-id="1">To each his own.</div>
-                    <div class="draggable" draggable="true" data-id="6">He was completely stunned.</div>
-                    <div class="draggable" draggable="true" data-id="10">She/He was rejected or turned away.</div>
-                    <div class="draggable" draggable="true" data-id="3">She/He made a complete mess of things.</div>
-                    <div class="draggable" draggable="true" data-id="8">She/He makes a mountain out of a molehill.</div>
-                    <div class="draggable" draggable="true" data-id="5">She/He's being very clingy.</div>
-                </div>
-            </div>
-        </div>
-        
-        <div id="activity2" class="tab-content">
-             <h2>Activity 2: Match the Phrases!</h2>
-            <div class="activity-container">
-                <div class="column">
-                    <h3>Greek Phrases</h3>
-                    <div class="dropzone" data-id="11"><p class="greek-phrase">«Μου έκανε την καρδιά περιβόλι.»</p></div>
-                    <div class="dropzone" data-id="12"><p class="greek-phrase">«Τον έπιασε στον ύπνο.»</p></div>
-                    <div class="dropzone" data-id="13"><p class="greek-phrase">«Μάτια που δεν βλέπονται, γρήγορα λησμονιούνται.»</p></div>
-                    <div class="dropzone" data-id="14"><p class="greek-phrase">«Όπου ακούς πολλά κεράσια, κράτα μικρό καλάθι.»</p></div>
-                    <div class="dropzone" data-id="15"><p class="greek-phrase">«Θα φάμε κουφέτα.»</p></div>
-                    <div class="dropzone" data-id="16"><p class="greek-phrase">«Είναι φυτό.»</p></div>
-                    <div class="dropzone" data-id="17"><p class="greek-phrase">«Έχει το ψώνιο.»</p></div>
-                    <div class="dropzone" data-id="18"><p class="greek-phrase">«Άλλαξε ο Μανωλιός κι έβαλε τα ρούχα του αλλιώς.»</p></div>
-                    <div class="dropzone" data-id="19"><p class="greek-phrase">«Αυγά σου καθαρίζουν;»</p></div>
-                    <div class="dropzone" data-id="20"><p class="greek-phrase">«Ψάχνει ψύλλους στ' άχυρα.»</p></div>
-                </div>
-                <div class="column">
-                    <h3>English Equivalents</h3>
-                     <div class="draggable" draggable="true" data-id="15">Someone's getting married.</div>
-                     <div class="draggable" draggable="true" data-id="18">A leopard can't change its spots.</div>
-                     <div class="draggable" draggable="true" data-id="13">Out of sight, out of mind.</div>
-                     <div class="draggable" draggable="true" data-id="17">She/He's obsessed with a particular hobby.</div>
-                     <div class="draggable" draggable="true" data-id="11">She/He made me very happy (used ironically).</div>
-                     <div class="draggable" draggable="true" data-id="19">Why are you laughing so uncontrollably?</div>
-                     <div class="draggable" draggable="true" data-id="12">She/He caught him/her completely off guard/unawares.</div>
-                     <div class="draggable" draggable="true" data-id="20">She/He's splitting hairs.</div>
-                     <div class="draggable" draggable="true" data-id="16">She/He is a nerd.</div>
-                     <div class="draggable" draggable="true" data-id="14">Take it with a grain of salt.</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="activity3" class="tab-content">
-             <h2>Activity 3: Match the Phrases!</h2>
-            <div class="activity-container">
-                <div class="column">
-                    <h3>Greek Phrases</h3>
-                     <div class="dropzone" data-id="21"><p class="greek-phrase">«Κάθε κατεργάρης στον πάγκο του.»</p></div>
-                    <div class="dropzone" data-id="22"><p class="greek-phrase">«Του έψησε το ψάρι στα χείλη.»</p></div>
-                    <div class="dropzone" data-id="23"><p class="greek-phrase">«Είναι για τα πανηγύρια.»</p></div>
-                    <div class="dropzone" data-id="24"><p class="greek-phrase">«Τρώει από τα έτοιμα.»</p></div>
-                    <div class="dropzone" data-id="25"><p class="greek-phrase">«Κάνει τον Κινέζο.»</p></div>
-                    <div class="dropzone" data-id="26"><p class="greek-phrase">«Τα μυαλά στα κάγκελα.»</p></div>
-                    <div class="dropzone" data-id="27"><p class="greek-phrase">«Άνθρακας ο θησαυρός.»</p></div>
-                    <div class="dropzone" data-id="28"><p class="greek-phrase">«Μπίλιες θα γίνουμε.»</p></div>
-                    <div class="dropzone" data-id="29"><p class="greek-phrase">«Μας πουλάει αέρα κοπανιστό.»</p></div>
-                    <div class="dropzone" data-id="30"><p class="greek-phrase">«Ίσα βάρκα, ίσα πανιά.»</p></div>
-                </div>
-                <div class="column">
-                    <h3>English Equivalents</h3>
-                    <div class="draggable" draggable="true" data-id="28">We're going to have a fight/brawl.</div>
-                    <div class="draggable" draggable="true" data-id="21">Everyone get back to work.</div>
-                    <div class="draggable" draggable="true" data-id="26">To be a fanatic/negatively passionate about sth.</div>
-                    <div class="draggable" draggable="true" data-id="22">She/He gave him/her a very hard time.</div>
-                    <div class="draggable" draggable="true" data-id="25">She/He's feigning ignorance.</div>
-                    <div class="draggable" draggable="true" data-id="30">To break even.</div>
-                    <div class="draggable" draggable="true" data-id="24">She/He lives off of others' work; a freeloader.</div>
-                    <div class="draggable" draggable="true" data-id="29">She/He's full of hot air / selling snake oil.</div>
-                    <div class="draggable" draggable="true" data-id="27">It turned out to be worthless; much ado about nothing.</div>
-                    <div class="draggable" draggable="true" data-id="23">She/He's a clown; it's a total mess.</div>
-                </div>
-            </div>
-        </div>
-    </div>
+  <header>
+    <h1>🍎 The English Teacher Aid Kit</h1>
+    <p><em>Created by Panagiotis Domvros, English and Drama Teacher</em></p>
+    <p class="update-notice">Material is constantly updated</p>
     
-    <footer>
-        ✨✍️ Compiled by Panagiotis Domvros, English and Drama Teacher, All Rights Reserved ✍️✨
-    </footer>
+    <div class="social-media">
+      <a href="https://www.facebook.com/panayotis.domvros/" target="_blank" title="Facebook">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.04c-5.5 0-10 4.49-10 10s4.5 10 10 10 10-4.49 10-10-4.5-10-10-10zm3.5 10.5h-2.5v7h-3v-7h-2v-3h2v-2c0-1.6.9-2.5 2.5-2.5h2.5v3h-1.5c-.5 0-.5.2-.5.5v1.5h2.5l-.5 3z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/p_domvros/" target="_blank" title="Instagram">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c-2.72 0-3.05.01-4.12.06-1.06.05-1.79.22-2.42.46-.65.25-1.23.59-1.77 1.15-.54.56-.89 1.13-1.14 1.78-.24.63-.41 1.36-.46 2.42-.05 1.07-.06 1.4-.06 4.12s.01 3.05.06 4.12c.05 1.06.22 1.79.46 2.42.25.65.59 1.23 1.14 1.78.54.56 1.12.91 1.77 1.15.63.24 1.36.41 2.42.46 1.07.05 1.4.06 4.12.06s3.05-.01 4.12-.06c1.06-.05 1.79-.22 2.42-.46.65-.25 1.23-.59 1.77-1.15.54-.56.89-1.13 1.14-1.78.24-.63.41-1.36.46-2.42.05-1.07.06-1.4.06-4.12s-.01-3.05-.06-4.12c-.05-1.06-.22-1.79-.46-2.42-.25-.65-.59-1.23-1.14-1.78-.54-.56-1.12-.9-1.77-1.14-.63-.24-1.36-.41-2.42-.46C15.05 2.01 14.72 2 12 2zm0 1.8c2.67 0 2.98.01 4.04.06 1.03.05 1.5.2 1.8.34.42.17.69.38.96.65.27.27.48.54.65.96.14.3.29.77.34 1.8.05 1.06.06 1.37.06 4.04s-.01 2.98-.06 4.04c-.05 1.03-.2 1.5-.34 1.8-.17.42-.38.69-.65.96-.27.27-.54.48-.96.65-.3.14-.77.29-1.8.34-1.06.05-1.37.06-4.04.06s-2.98-.01-4.04-.06c-1.03-.05-1.5-.2-1.8-.34-.42-.17-.69-.38-.96-.65-.27-.27-.48-.54-.65-.96-.14-.3-.29-.77-.34-1.8-.05-1.06-.06-1.37-.06-4.04s.01-2.98.06-4.04c.05-1.03.2-1.5.34-1.8.17-.42.38-.69.65-.96.27-.27.54-.48.96-.65.3-.14.77-.29 1.8-.34C9.02 3.81 9.33 3.8 12 3.8zm0 3.35c-2.4 0-4.35 1.95-4.35 4.35s1.95 4.35 4.35 4.35 4.35-1.95 4.35-4.35-1.95-4.35-4.35-4.35zm0 7c-1.47 0-2.65-1.18-2.65-2.65S10.53 9.5 12 9.5s2.65 1.18 2.65 2.65-1.18 2.65-2.65 2.65zm4.95-6.9c-.61 0-1.1.49-1.1 1.1s.49 1.1 1.1 1.1 1.1-.49 1.1-1.1-.49-1.1-1.1-1.1z"/></svg>
+      </a>
+      <a href="https://www.youtube.com/channel/UCn0jq-LEikDRVDQHQi47eYw" target="_blank" title="YouTube">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.36 14.12V7.88c0-.61.66-1.01 1.2-.69l5.06 3.12c.54.33.54.85 0 1.18l-5.06 3.12c-.54.33-1.2-.08-1.2-.69z"/></svg>
+      </a>
+      <a href="mailto:pa.domvros@gmail.com" title="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg>
+      </a>
+    </div>
+  </header>
 
-    <script>
-        function openTab(evt, tabName) {
-            let i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tab-button");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
+  <main>
 
-        // New button functionality for Greek equivalents
-        const internationalList = document.getElementById('international-list');
-        internationalList.addEventListener('click', function(e) {
-            if (e.target && e.target.classList.contains('toggle-greek-btn')) {
-                const btn = e.target;
-                const equivalentP = btn.nextElementSibling;
-                const isHidden = equivalentP.style.display === 'none';
-                
-                equivalentP.style.display = isHidden ? 'block' : 'none';
-                btn.textContent = isHidden ? 'Hide Equivalent' : 'Greek Equivalent';
-            }
-        });
-        
-        // Drag and Drop functionality
-        function initializeDragAndDrop(containerSelector) {
-            const container = document.querySelector(containerSelector);
-            if (!container) return;
+    <details>
+      <summary>🇬🇧 Grammar</summary>
+      <ul>
+        <li><a href="#">GrammarLab Hub – restricted access</a></li>
+        <li><a href="https://pa-domvros.github.io/GrammarQuest/" target="_blank">GrammarQuest (Present Simple & Continuous)</a></li>
+        <li><a href="https://pa-domvros.github.io/spin-present-sc/" target="_blank">Spin the Wheel (Present: Simple or Continuous? All levels)</a></li>
+        <li><a href="https://pa-domvros.github.io/past.s-past.c/" target="_blank">Simple Past and Past Progressive (A2-B1)</a></li>
+        <li><a href="https://pa-domvros.github.io/presentperfect-past1/" target="_blank">Simple Past or Simple Present Perfect (A2-B1)</a></li>
+        <li><a href="https://pa-domvros.github.io/worksheet-comparisons1/" target="_blank">Comparisons (A1)</a></li>
+        <li><a href="https://pa-domvros.github.io/place-prep1/" target="_blank">Prepositions of Place (A1)</a></li>
+        <li><a href="https://pa-domvros.github.io/reality-check/" target="_blank">Reality Check (Unreal Tenses – B2/C2)</a></li>
+        <li><a href="https://pa-domvros.github.io/editor-passive/" target="_blank">Editor’s Choice (Passive Voice B2-C2)</a></li>
+        <li><a href="https://pa-domvros.github.io/VoiceLab/#scenario-explorer" target="_blank">VoiceLab (Passive Voice B2-C2)</a></li>
+        <li><a href="https://pa-domvros.github.io/instruction-follower/" target="_blank">Instruction Follower (Imperative – A1/A2)</a></li>
+        <li><a href="https://pdomvros-productions.github.io/EmphasisLab/" target="_blank">EmphasisLab (Advanced)</a></li>
+        <li><a href="https://pa-domvros.github.io/ClauseCrafter/" target="_blank">ClauseCrafter (B2-C1)</a></li>
+        <li><a href="https://pa-domvros.github.io/pres-cont-1/" target="_blank">Present Continuous Practice 1(A1)</a></li>
+        <li><a href="https://pa-domvros.github.io/NowAndAlways/" target="_blank">Present Continuous vs Simple Present Practice 1(A1/A2)</a></li>
+        <li><a href="https://pa-domvros.github.io/Midsummer-PracticeBook/" target="_blank">Simple Past Story Book Practice [A Mid-Summer's Night Dream (A1/A2)]</a></li>
+        <li><a href="https://pa-domvros.github.io/Othello-Conditionals/" target="_blank">Othello - Conditional Practice</a></li>
+        <li><a href="https://https://pa-domvros.github.io/Tempest-Passive/" target="_blank">The Tempest - Passive Voice Practice</a></li>
+        <li><a href="https://pa-domvros.github.io/MuchAdo-Reported/" target="_blank">Much Ado About Nothing- Reported Speech Practice</a></li>
+        <li><a href="https://pa-domvros.github.io/Romeo-Juliet-Tenses/" target="_blank">Romeo and Juliet- Tenses Practice</a></li>
+        <li><a href="https://pa-domvros.github.io/The-Missing-Cauldron/" target="_blank">Charalampos's Adventures — The Missing Cauldron (Making a Complaint, B2)</a></li>
+        <li><a href="https://pa-domvros.github.io/The-Whispering-Grimoire/" target="_blank">Charalampos's Adventures — The Whispering Grimoire (Reported Speech, B1)</a></li>
+        <li><a href="https://pa-domvros.github.io/The-Tower-Vanishes/" target="_blank">Charalampos's Adventures — The Vanishing Tower (Conditionals, Wihes and Regrerts, B2)</a></li>
+    </details>
 
-            const draggables = container.querySelectorAll('.draggable');
-            const dropzones = container.querySelectorAll('.dropzone');
-            
-            draggables.forEach(draggable => {
-                draggable.addEventListener('dragstart', () => {
-                    isDragging = true;
-                    draggable.classList.add('dragging');
-                });
-                draggable.addEventListener('dragend', () => {
-                    isDragging = false;
-                    draggable.classList.remove('dragging');
-                });
-            });
+    <details>
+      <summary>✍️ Writing</summary>
+      <ul>
+        <li><a href="https://pa-domvros.github.io/SituationWhisperer/" target="_blank">Situation Whisperer (Agreeing and Disagreeing)</a></li>
+        <li><a href="https://pa-domvros.github.io/argument-builder/" target="_blank">The Argument Builder (B2-C2)</a></li>
+        <li><a href="https://pa-domvros.github.io/breaking-story/" target="_blank">The Daily Chronicle (Writing an Article A2-C2)</a></li>
+        <li><a href="https://pa-domvros.github.io/HookLab/" target="_blank">HookLab (Attention Grabbers – Advanced)</a></li>
+        <li><a href="https://pa-domvros.github.io/story-character-creator/" target="_blank">Story Character Creator (B2-C2)</a></li>
+        <li><a href="https://pa-domvros.github.io/character-description-bulder/" target="_blank">Character Builder & Essay Writer (Describing a Person B2-C2)</a></li>
+        <li><a href="https://pa-domvros.github.io/email-builder/" target="_blank">Email Builder for EFL Students (B2-C2)</a></li>
+        <li><a href="https://pdomvros.github.io/argumentative-B2/" target="_blank">Argumentative Essay B2</a></li>
+        <li><a href="https://pa-domvros.github.io/PunctuationLab/" target="_blank">PunctuationLab</a></li>
+        <li><a href="https://pa-domvros.github.io/ComicReady/" target="_blank">ComicReady (for Beginners)</a></li>
+        <li><a href="https://pa-domvros.github.io/StoryArchitect/" target="_blank">StoryArchitect - Narrative Frameworks (for Advanced Students)</a></li>
+        <li><a href="https://pa-domvros.github.io/fairytale/" target="_blank">Writing a Fairytale (for Upper-Intermediate/Advanced Students)</a></li>
+        <li><a href="https://pa-domvros.github.io/StoryPrompt/" target="_blank">StoryPromt</a></li>
+        <li><a href="https://pa-domvros.github.io/ActionPrompt/" target="_blank">ActionPrompt</a></li>
+        <li><a href="https://pa-domvros.github.io/Helen-StorybookBuilder/" target="_blank">Helen - Storybook Builder (bilingual - Γ Γυμνασίου)</a></li>
+        <li><a href="https://pa-domvros.github.io/MyStoryBook/" target="_blank">My Storybook Builder</a></li>
+        <li><a href="https://pa-domvros.github.io/Storybook-Iliad/" target="_blank">Iliad-Storybook</a></li>
+        <li><a href="https://pa-domvros.github.io/SentenceStarters/" target="_blank">Sentence Starters (Intermediate-Advanced)</a></li>
+      </u>
+    </details>
 
-            dropzones.forEach(zone => {
-                zone.addEventListener('dragover', e => {
-                    e.preventDefault();
-                    zone.classList.add('drag-over');
-                });
-                zone.addEventListener('dragleave', () => {
-                    zone.classList.remove('drag-over');
-                });
-                zone.addEventListener('drop', e => {
-                    e.preventDefault();
-                    zone.classList.remove('drag-over');
-                    const draggedElement = document.querySelector('.dragging');
-                    if (draggedElement && zone.dataset.id === draggedElement.dataset.id) {
-                        if (zone.children.length > 1 && zone.querySelector('.draggable')) {
-                            return;
-                        }
-                        zone.appendChild(draggedElement);
-                        zone.classList.add('correct');
-                        draggedElement.setAttribute('draggable', 'false');
-                        draggedElement.style.cursor = 'default';
-                    }
-                });
-            });
-        }
+<details>
+      <summary>📖 Reading</summary>
+      <ul>
+        <li><a href="https://pa-domvros.github.io/storybooks1/" target="_blank">Story Book (in construction)</a></li>
+      </ul>
+    </details>
 
-        let isDragging = false;
-        
-        // Initialize for all three activity tabs
-        initializeDragAndDrop('#activity1');
-        initializeDragAndDrop('#activity2');
-        initializeDragAndDrop('#activity3');
-        
-        // Auto-scroll functionality
-        window.addEventListener('dragover', function(e) {
-            if (!isDragging) return;
+    <details>
+      <summary>🗣️ Speaking</summary>
+      <ul>
+        <li><a href="https://pa-domvros.github.io/FluentFlow/" target="_blank">FluentFlow (All Levels)</a></li>
+        <li><a href="https://pa-domvros.github.io/ClearSpeak/" target="_blank">ClearSpeak – (Asking for Clarifications B2-C2)</a></li>
+        <li><a href="https://pa-domvros.github.io/MinuteTalk/" target="_blank">ΜinuteTalk – (4 Levels)</a></li>
+        <li><a href="https://pa-domvros.github.io/FlashPhilosophy/" target="_blank">Flash Philosophy – Bilingual</a></li>
 
-            const viewportHeight = window.innerHeight;
-            const scrollThreshold = 70; // Pixels from edge to start scrolling
-            const scrollSpeed = 15; // Speed of scroll
+      </ul>
+    </details>
 
-            if (e.clientY < scrollThreshold) {
-                window.scrollBy(0, -scrollSpeed);
-            } else if (e.clientY > viewportHeight - scrollThreshold) {
-                window.scrollBy(0, scrollSpeed);
-            }
-        });
-    </script>
+    <details>
+      <summary>🎧 Listening</summary>
+      <ul>
+        <li><a href="https://pa-domvros.github.io/media-comprehension1/" target="_blank">Media Comprehension 1 (Β Γυμνασίου)</a></li>
+      </ul>
+    </details>
 
+    <details>
+      <summary>📚 Vocabulary Practice</summary>
+      <ul>
+        <li><a href="https://pa-domvros.github.io/LexiQuest/" target="_blank">LexiQuest – The Hellenic Journey (Idioms B2-C2)</a></li>
+        <li><a href="https://pa-domvros.github.io/vocab-fire-challenge/" target="_blank">Vocabulary Fire Challenge (Core Vocabulary, All Levels)</a></li>
+        <li><a href="https://pa-domvros.github.io/Collocation-Dictionary-App/" target="_blank">Collocation Dictionary (Advanced)</a></li>
+        <li><a href="https://pdomvros-productions.github.io/life-after-C2/" target="_blank">Life after C2 (Very Advanced)</a></li>
+        <li><a href="https://pdomvros-edu.github.io/word-weaver/" target="_blank">The Word Weaver (B2)</a></li>
+        <li><a href="https://pdomvros-edu.github.io/word-weaver2/" target="_blank">The Word Weaver 2</a></li>
+        <li><a href="https://pdomvros-productions.github.io/ShakeSpeak/" target="_blank">ShakeSpeak: Phrases from Shakespeare</a></li>
+        <li><a href="https://pa-domvros.github.io/WordSpin//" target="_blank">WordSpin: Euphemisms-Dysphemisms</a></li>
+        <li><a href="https://pa-domvros.github.io/FunnyWords/" target="_blank">FunnyWords</a></li>
+        <li><a href="https://pa-domvros.github.io/IdiomQuest/" target="_blank">IdiomQuest (Upper-Intermediate/Advanced)</a></li>
+        <li><a href="https://pa-domvros.github.io/colour-couleur-farbe/" target="_blank">Learning Colours (available in 3 languages)</a></li>
+        <li><a href="https://pa-domvros.github.io/medical-english1/" target="_blank">Medical English Practice (EPAL Students Practice)</a></li>
+        <li><a href="https://pa-domvros.github.io/IdiomElectric/" target="_blank">IdiomElectric (Colour Idioms)</a></li>
+        <li><a href="https://pa-domvros.github.io/Fun-with-Phrases/" target="_blank">Fun with Phrases</a></li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>🧑‍🏫 Classroom Management</summary>
+      <ul>
+        <li><a href="https://pa-domvros.github.io/ClassroomChampions/" target="_blank">Classroom Champions (Beginners)</a></li>
+        <li><a href="https://pa-domvros.github.io/TeacherSpeak/" target="_blank">TeacherSpeak: Effective Teacher-Student Communication</a></li>
+        <li><a href="https://pa-domvros.github.io/break-boredom/" target="_blank">Break the Boredom in the Classroom</a></li>
+        <li><a href="https://pa-domvros.github.io/proactive1/" target="_blank">Proactive Classroom Management Strategies</a></li>
+        <li><a href="https://pa-domvros.github.io/Teacher-SwissKnife/" target="_blank">Teacher's Swiss Army Knife</a></li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>⏳ Time Fillers</summary>
+      <ul>
+        <li><a href="https://pa-domvros.github.io/LondonGo/" target="_blank">London Go!</a></li>
+        <li><a href="https://panagiotis-domvros.github.io/back-to-the-future-2/" target="_blank">Back-to-the-Future</a></li>
+        <li><a href="https://panagiotis-domvros.github.io/soulmate-partner/" target="_blank">Future Soulmate (Valentine’s Special)</a></li>
+        <li><a href="https://pdomvros.github.io/letter-from-the-past/" target="_blank">Letters from the Past</a></li>
+        <li><a href="https://pa-domvros.github.io/malapropism//" target="_blank">Malapropisms</a></li>
+        <li><a href="https://pdomvros-productions.github.io/StageReady/" target="_blank">StageReady (for Advanced Theatre Lovers)</a></li>
+        <li><a href="https://pa-domvros.github.io/backpocket-questions/" target="_blank">Backpocket Questions</a></li>
+        <li><a href="https://pa-domvros.github.io/English_Jeopardy-1/" target="_blank">English Jeopardy 1</a></li>
+        <li><a href="https://pa-domvros.github.io/Shakespeare-TopTrumps/" target="_blank">Shakespeare Top Trumps</a></li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>🎲 Fun and Games (use with caution!)</summary>
+      <ul>
+        <li><a href="https://pdomvros.github.io/love-hangman-en/" target="_blank">Hangman of Love</a></li>
+        <li><a href="https://panagiotis-domvros.github.io/AuraVoice/" target="_blank">AuraVoice</a></li>
+        <li><a href="https://pdomvros-productions.github.io/LegacyPrint/" target="_blank">LegacyPrint</a></li>
+        <li><a href="https://pdomvros-productions.github.io/SoulSearch/" target="_blank">SoulSearch</a></li>
+        <li><a href="https://pdomvros-productions.github.io/AncestryTrace/" target="_blank">AncestryTrace</a></li>
+        <li><a href="https://pdomvros-productions.github.io/type-of-smart/" target="_blank">What is you smart?</a></li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>🚪 Escape Rooms</summary>
+      <ul>
+        <li><a href="https://docs.google.com/presentation/d/12gr7cc7GFafp02bikCDuKTMUPkJERD3tulBFordixv8/present?slide=id.p" target="_blank">First Aid (ΕΠΑΛ)</a></li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>🎯 Special Focus</summary>
+      <ul>
+        <li><a href="https://pdomvros.github.io/bullying-eng/" target="_blank">Bullying</a></li>
+        <li><a href="https://pa-domvros.github.io/abusive-language//" target="_blank">Abusive Language</a></li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>✒️Lesson Plans and Educational Scenarios</summary>
+      <ul>
+        <li><a href="#">Lesson Plan Builder– restricted access</a></li>
+        <li><a href="https://https://pa-domvros.github.io/assessment-types//" target="_blank">Formative vs. Summative Assessmet</a></li>
+        <li><a href="https://pa-domvros.github.io/ed-scenario-builder/" target="_blank">Educational Scenario Builder</a></li>
+        <li><a href="https://pa-domvros.github.io/Brushup-Shakespeare/" target="_blank">Brush Up Your Shakespeare</a></li>
+        <li><a href="https://pa-domvros.github.io/Merchant-of-Venice/" target="_blank">The Merchant of Venice - Racism</a></li>
+        <li><a href="https://pa-domvros.github.io/Taming-of-Shrew/" target="_blank">The Taming of the Shrew - Sexism</a></li>
+        <li><a href="https://pa-domvros.github.io/All-is-Well/" target="_blank">All is Well That Ends Well- Ageism</a></li>
+        <li><a href="https://pa-domvros.github.io/Hamlet/" target="_blank">Hamlet - Depression</a></li>
+        <li><a href="https://pa-domvros.github.io/Hamlet/" target="_blank">Romeo and Juliet - Love, Labels & Teenage Relationships</a></li>
+        <li><a href="https://pa-domvros.github.io/The-Missing-Cauldron/" target="_blank">Making a Complaint</a></li>
+        <li><a href="https://pa-domvros.github.io/Deepfake-B2LessonPlan/" target="_blank">Deepfakes — The Power & Perils of Synthetic Reality (B2)</a></li>
+        <li><a href="https://pa-domvros.github.io/RenaissanceMuseum-C1/" target="_blank">Renaissance Museum (C1)</a></li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>🌍For Greek, German, French Languages</summary>
+      <ul>
+        <li><a href="https://pa-domvros.github.io/StoryArchitect-GR/" target="_blank">Αρχιτέκτονες Ιστορίων - Αφηγηματικές Δομές (για μαθητές Γ Γυμνασίου και Λυκείου)</a></li>
+        <li><a href="https://pa-domvros.github.io/Bande-Dessin-e-Interactive/" target="_blank">Bande Dessinée Interactive</a></li>
+      </ul>
+    </details>
+  </main>
+
+  <footer>
+    <p>✨ Panagiotis Domvros (pa.domvros@gmail.com), English and Drama Teacher, All Rights Reserved ✨</p>
+  </footer>
 </body>
 </html>
